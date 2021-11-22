@@ -5,39 +5,6 @@
 #include<stdlib.h>
 char token_buffer[100];
 typedef enum token_type{
-    mot_clef,oprel,id,nb
+    mot_clef,oprel,id,nb,err
 }token;
 char TableTokens[4][50]={"mot_clef","oprel","id","nb"};
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
