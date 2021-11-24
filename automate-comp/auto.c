@@ -2,22 +2,20 @@
 #include"struct.h"
 #include<ctype.h>
 char mot[50];
-int current_pos = 0;
+FilePlace Mot;
 char next_char()
 {
-    char r = mot[current_pos];
-    if(r=='\0'){
-        r=' ';
-    }
-    current_pos++;
+    char r=getc(Fl);
+    if(r=='\n')NUMLIGNE++;
     return r;
 }
 void init_pos(){
-    current_pos = 0;
+    ReturnToplace(Fl,Mot);
 }
 token etat_10()
 {
-    if(isspace(next_char()))
+    char c;
+    if(isspace(c=next_char())||c==EOF)
     {
         return mot_clef;
     }
@@ -92,7 +90,7 @@ token etat_3()
 token etat_2()
 {
     char c=next_char();
-    if(isspace(c)){
+    if(isspace(c)||c==EOF){
         return mot_clef;
     }
     switch (c)
@@ -131,7 +129,8 @@ token etat_0()
 }
 token etat_14()
 {
-   if(isspace(next_char()))
+    char c;
+   if(isspace(c=next_char())||c==EOF)
     {
         return oprel;
     }
@@ -140,7 +139,7 @@ token etat_14()
 token etat_13()
 {
     char c=next_char();
-    if(isspace(c))return oprel;
+    if(isspace(c)||c==EOF)return oprel;
     switch (c)
     {
     case '=':
@@ -153,7 +152,7 @@ token etat_13()
 token etat_12()
 {
     char c=next_char();
-    if(isspace(c))return oprel;
+    if(isspace(c)||c==EOF)return oprel;
     switch (c)
     {
     case '>':
@@ -187,7 +186,7 @@ token etat_11()
 token etat_16()
 {
     char c=next_char();
-    if(isspace(c))return id;
+    if(isspace(c)||c==EOF)return id;
     if(isletter(c))return etat_16();
     if(ischiffre(c))return etat_16();
     return err;
@@ -201,7 +200,7 @@ token etat_15()
 token etat_23()
 {
     char c=next_char();
-    if(isspace(c))return nb;
+    if(isspace(c)||c==EOF)return nb;
     if(ischiffre(c))return etat_23();
     return err;
 }
@@ -221,7 +220,7 @@ token etat_21()
 token etat_20()
 {
     char c=next_char();
-    if(isspace(c))return nb;
+    if(isspace(c)||c==EOF)return nb;
     if(ischiffre(c))return etat_20();
     if(c=='E')return etat_21();
     return err;
@@ -235,7 +234,7 @@ token etat_19()
 token etat_18()
 {
     char c=next_char();
-    if(isspace(c))return nb;
+    if(isspace(c)||c==EOF)return nb;
     if(ischiffre(c))return etat_18();///////////////we know//////////////////
     switch (c)
     {
@@ -257,6 +256,7 @@ token etat_17()
 }
 token fail()
 {
+    char c;
     token R=etat_0();
     if(R!=err)return R;
     init_pos();
@@ -267,5 +267,32 @@ token fail()
     if(R!=err)return R;
     init_pos();
     R=etat_17();
-    return R;
+    if(R!=err)return R;
+    if((c=next_char())==EOF)return scanof;
+    ungetc(c,Fl);
+    return err;
+}
+void putInFile(char*car,FILE*file)
+{
+    fprintf(file,"[%s]",car);
+}
+char* scanner(char*chemin)
+{
+    NUMLIGNE=1;
+    Fl=fopen(chemin,"r");
+    char*Lexia="Lexical_file.txt";
+    FILE*LEX=fopen(Lexia,"w");
+    token tok;
+    char c;
+    Mot=RememberPlace(Fl);
+    while((tok=fail())!=scanof)
+    {
+        putInFile(TableTokens[tok],LEX);
+        while(isspace(c=getc(Fl)));
+        ungetc(c,Fl);
+        Mot=RememberPlace(Fl);
+    }
+    fclose(Fl);
+    fclose(LEX);
+    return Lexia;
 }

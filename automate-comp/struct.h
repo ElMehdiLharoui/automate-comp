@@ -11,9 +11,9 @@ typedef struct{
     unsigned long Rem;
 }FilePlace;
 typedef enum token_type{
-    mot_clef,oprel,id,nb,err
+    mot_clef,oprel,id,nb,err,scanof
 }token;
-char TableTokens[5][20]={"mot_clef","oprel","id","nb","error"};
+char TableTokens[6][20]={"mot_clef","oprel","id","nb","error","scanof"};
 int isletter(char c)
 {
     if((c>='a' && c<='z')||(c>='A' && c<='Z'))return 1;
