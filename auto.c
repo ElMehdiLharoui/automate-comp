@@ -1,27 +1,29 @@
 #include <stdio.h>
-#include"struct.h"
-#include<ctype.h>
+#include "struct.h"
+#include <ctype.h>
 char mot[50];
 int current_pos = 0;
 char next_char()
 {
     char r = mot[current_pos];
-    if(r=='\0'){
-        r=' ';
+    if (r == '\0')
+    {
+        r = ' ';
     }
     current_pos++;
     return r;
 }
-void init_pos(){
+void init_pos()
+{
     current_pos = 0;
 }
 token etat_10()
 {
-    if(isspace(next_char()))
+    if (isspace(next_char()))
     {
         return mot_clef;
     }
-    return err; 
+    return err;
 }
 token etat_9()
 {
@@ -91,8 +93,9 @@ token etat_3()
 }
 token etat_2()
 {
-    char c=next_char();
-    if(isspace(c)){
+    char c = next_char();
+    if (isspace(c))
+    {
         return mot_clef;
     }
     switch (c)
@@ -131,20 +134,21 @@ token etat_0()
 }
 token etat_14()
 {
-   if(isspace(next_char()))
+    if (isspace(next_char()))
     {
         return oprel;
     }
-    return err; 
+    return err;
 }
 token etat_13()
 {
-    char c=next_char();
-    if(isspace(c))return oprel;
+    char c = next_char();
+    if (isspace(c))
+        return oprel;
     switch (c)
     {
     case '=':
-        return etat_14(); 
+        return etat_14();
         break;
     default:
         return err;
@@ -152,12 +156,13 @@ token etat_13()
 }
 token etat_12()
 {
-    char c=next_char();
-    if(isspace(c))return oprel;
+    char c = next_char();
+    if (isspace(c))
+        return oprel;
     switch (c)
     {
     case '>':
-        return etat_14(); 
+        return etat_14();
         break;
     case '=':
         return etat_14();
@@ -168,7 +173,7 @@ token etat_12()
 }
 token etat_11()
 {
-    char c=next_char();
+    char c = next_char();
     switch (c)
     {
     case '<':
@@ -186,57 +191,72 @@ token etat_11()
 }
 token etat_16()
 {
-    char c=next_char();
-    if(isspace(c))return id;
-    if(isletter(c))return etat_16();
-    if(ischiffre(c))return etat_16();
+    char c = next_char();
+    if (isspace(c))
+        return id;
+    if (isletter(c))
+        return etat_16();
+    if (ischiffre(c))
+        return etat_16();
     return err;
 }
 token etat_15()
 {
-    char c=next_char();
-    if(isletter(c))return etat_16();
+    char c = next_char();
+    if (isletter(c))
+        return etat_16();
     return err;
 }
 token etat_23()
 {
-    char c=next_char();
-    if(isspace(c))return nb;
-    if(ischiffre(c))return etat_23();
+    char c = next_char();
+    if (isspace(c))
+        return nb;
+    if (ischiffre(c))
+        return etat_23();
     return err;
 }
 token etat_22()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_23();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_23();
     return err;
 }
 token etat_21()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_23();
-    if(c=='+' || c=='-') return etat_22();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_23();
+    if (c == '+' || c == '-')
+        return etat_22();
     return err;
 }
 token etat_20()
 {
-    char c=next_char();
-    if(isspace(c))return nb;
-    if(ischiffre(c))return etat_20();
-    if(c=='E')return etat_21();
+    char c = next_char();
+    if (isspace(c))
+        return nb;
+    if (ischiffre(c))
+        return etat_20();
+    if (c == 'E')
+        return etat_21();
     return err;
 }
 token etat_19()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_20();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_20();
     return err;
 }
 token etat_18()
 {
-    char c=next_char();
-    if(isspace(c))return nb;
-    if(ischiffre(c))return etat_18();///////////////we know//////////////////
+    char c = next_char();
+    if (isspace(c))
+        return nb;
+    if (ischiffre(c))
+        return etat_18(); ///////////////we know//////////////////
     switch (c)
     {
     case '.':
@@ -251,21 +271,25 @@ token etat_18()
 }
 token etat_17()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_18();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_18();
     return err;
 }
 token fail()
 {
-    token R=etat_0();
-    if(R!=err)return R;
+    token R = etat_0();
+    if (R != err)
+        return R;
     init_pos();
-    R=etat_11();
-    if(R!=err)return R;
+    R = etat_11();
+    if (R != err)
+        return R;
     init_pos();
-    R=etat_15();
-    if(R!=err)return R;
+    R = etat_15();
+    if (R != err)
+        return R;
     init_pos();
-    R=etat_17();
+    R = etat_17();
     return R;
 }
