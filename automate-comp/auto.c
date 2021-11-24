@@ -7,7 +7,7 @@ char next_char()
 {
     char r = mot[current_pos];
     if(r=='\0'){
-        r='\b';
+        r=' ';
     }
     current_pos++;
     return r;
@@ -129,9 +129,47 @@ token etat_0()
         return err;
     }
 }
+token etat_14()
+{
+   if(isspace(next_char()))
+    {
+        return oprel;
+    }
+    return err; 
+}
+token etat_13()
+{
+    char c=next_char();
+    if(isspace(c))return oprel;
+    switch (c)
+    {
+    case '=':
+        return etat_14(); 
+        break;
+    default:
+        return err;
+    }
+}
+token etat_12()
+{
+    char c=next_char();
+    if(isspace(c))return oprel;
+    switch (c)
+    {
+    case '>':
+        return etat_14(); 
+        break;
+    case '=':
+        return etat_14();
+        break;
+    default:
+        return err;
+    }
+}
 token etat_11()
 {
-    switch (next_char())
+    char c=next_char();
+    switch (c)
     {
     case '<':
         return etat_12();
@@ -146,9 +184,88 @@ token etat_11()
         return err;
     }
 }
+token etat_16()
+{
+    char c=next_char();
+    if(isspace(c))return id;
+    if(isletter(c))return etat_16();
+    if(ischiffre(c))return etat_16();
+    return err;
+}
+token etat_15()
+{
+    char c=next_char();
+    if(isletter(c))return etat_16();
+    return err;
+}
+token etat_23()
+{
+    char c=next_char();
+    if(isspace(c))return nb;
+    if(ischiffre(c))return etat_23();
+    return err;
+}
+token etat_22()
+{
+    char c=next_char();
+    if(ischiffre(c))return etat_23();
+    return err;
+}
+token etat_21()
+{
+    char c=next_char();
+    if(ischiffre(c))return etat_23();
+    if(c=='+' || c=='-') return etat_22();
+    return err;
+}
+token etat_20()
+{
+    char c=next_char();
+    if(isspace(c))return nb;
+    if(ischiffre(c))return etat_20();
+    if(c=='E')return etat_21();
+    return err;
+}
+token etat_19()
+{
+    char c=next_char();
+    if(ischiffre(c))return etat_20();
+    return err;
+}
+token etat_18()
+{
+    char c=next_char();
+    if(isspace(c))return nb;
+    if(ischiffre(c))return etat_18();///////////////we know//////////////////
+    switch (c)
+    {
+    case '.':
+        return etat_19();
+        break;
+    case 'E':
+        return etat_21();
+        break;
+    default:
+        return err;
+    }
+}
+token etat_17()
+{
+    char c=next_char();
+    if(ischiffre(c))return etat_18();
+    return err;
+}
 token fail()
 {
     token R=etat_0();
     if(R!=err)return R;
+    init_pos();
     R=etat_11();
+    if(R!=err)return R;
+    init_pos();
+    R=etat_15();
+    if(R!=err)return R;
+    init_pos();
+    R=etat_17();
+    return R;
 }
