@@ -1,32 +1,27 @@
 #include <stdio.h>
 #include"struct.h"
 #include<ctype.h>
-char mot[50];
+char current_Char;
 FilePlace Mot;
 char next_char()
 {
-    char r=getc(Fl);
-    if(r=='\n')NUMLIGNE++;
-    return r;
+    current_Char=getc(Fl);
+    if(current_Char=='\n')NUMLIGNE++;
+    return current_Char;
 }
 void init_pos(){
     ReturnToplace(Fl,Mot);
 }
-token etat_10()
+token etat_10(token t)
 {
-    char c;
-    if(isspace(c=next_char())||c==EOF)
-    {
-        return mot_clef;
-    }
-    return err; 
+    return t;
 }
 token etat_9()
 {
     switch (next_char())
     {
     case 's':
-        return etat_10();
+        return etat_10(alors);
         break;
     default:
         return err;
@@ -70,7 +65,7 @@ token etat_4()
     switch (next_char())
     {
     case 'n':
-        return etat_10();
+        return etat_10(sinon);
         break;
     default:
         return err;
@@ -89,17 +84,15 @@ token etat_3()
 }
 token etat_2()
 {
-    char c=next_char();
-    if(isspace(c)||c==EOF){
-        return mot_clef;
-    }
+    char c=next_char();  
     switch (c)
     {
     case 'n':
         return etat_3();
         break;
-    default:
-        return err;
+    default: 
+        ungetc(c,Fl);
+        return si;
     }
 }
 token etat_1()
@@ -129,30 +122,25 @@ token etat_0()
 }
 token etat_14()
 {
-    char c;
-   if(isspace(c=next_char())||c==EOF)
-    {
-        return oprel;
-    }
-    return err; 
+    return oprel;
 }
 token etat_13()
 {
     char c=next_char();
-    if(isspace(c)||c==EOF)return oprel;
     switch (c)
     {
     case '=':
         return etat_14(); 
         break;
     default:
-        return err;
+        ungetc(c,Fl);
+        return oprel;
     }
 }
 token etat_12()
 {
     char c=next_char();
-    if(isspace(c)||c==EOF)return oprel;
+   
     switch (c)
     {
     case '>':
@@ -161,8 +149,9 @@ token etat_12()
     case '=':
         return etat_14();
         break;
-    default:
-        return err;
+    default: 
+        ungetc(c,Fl);
+        return oprel;
     }
 }
 token etat_11()
@@ -186,10 +175,10 @@ token etat_11()
 token etat_16()
 {
     char c=next_char();
-    if(isspace(c)||c==EOF)return id;
     if(isletter(c))return etat_16();
     if(ischiffre(c))return etat_16();
-    return err;
+    ungetc(c,Fl);
+    return id;
 }
 token etat_15()
 {
@@ -200,8 +189,9 @@ token etat_15()
 token etat_23()
 {
     char c=next_char();
-    if(isspace(c)||c==EOF)return nb;
     if(ischiffre(c))return etat_23();
+    ungetc(c,Fl);
+    return nb;
     return err;
 }
 token etat_22()
@@ -220,9 +210,10 @@ token etat_21()
 token etat_20()
 {
     char c=next_char();
-    if(isspace(c)||c==EOF)return nb;
     if(ischiffre(c))return etat_20();
     if(c=='E')return etat_21();
+    ungetc(c,Fl);
+    return nb;
     return err;
 }
 token etat_19()
@@ -234,7 +225,6 @@ token etat_19()
 token etat_18()
 {
     char c=next_char();
-    if(isspace(c)||c==EOF)return nb;
     if(ischiffre(c))return etat_18();///////////////we know//////////////////
     switch (c)
     {
@@ -245,7 +235,8 @@ token etat_18()
         return etat_21();
         break;
     default:
-        return err;
+        ungetc(c,Fl);
+        return nb;
     }
 }
 token etat_17()
@@ -256,7 +247,7 @@ token etat_17()
 }
 token fail()
 {
-    char c;
+    char c,temp;
     token R=etat_0();
     if(R!=err)return R;
     init_pos();
@@ -268,8 +259,11 @@ token fail()
     init_pos();
     R=etat_17();
     if(R!=err)return R;
+    temp=current_Char;
     if((c=next_char())==EOF)return scanof;
     ungetc(c,Fl);
+    current_Char=temp;
+    error(Fl,current_Char);
     return err;
 }
 void putInFile(char*car,FILE*file)

@@ -11,9 +11,9 @@ typedef struct{
     unsigned long Rem;
 }FilePlace;
 typedef enum token_type{
-    mot_clef,oprel,id,nb,err,scanof
+    si,sinon,alors,oprel,id,nb,err,scanof
 }token;
-char TableTokens[6][20]={"mot_clef","oprel","id","nb","error","scanof"};
+char TableTokens[10][20]={"si","sinon","alors","oprel","id","nb","error","scanof"};
 int isletter(char c)
 {
     if((c>='a' && c<='z')||(c>='A' && c<='Z'))return 1;
@@ -35,4 +35,8 @@ void ReturnToplace(FILE *file,FilePlace He)
 {
     NUMLIGNE=He.NUMLIGNE;
     fseek(file,He.Rem,SEEK_SET);
+}
+void error(FILE*F,char c)
+{
+    printf("character inattendue %c dans la ligne : %d\n", c, NUMLIGNE);
 }
