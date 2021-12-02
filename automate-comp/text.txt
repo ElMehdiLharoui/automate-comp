@@ -1,1 +1,4 @@
-si in = 75.E4 sinon E=qs
+si in <= 75.E4 alors
+2E2
+in =0.E4 ;
+sinon in=qs

@@ -1,16 +1,18 @@
 #include <stdio.h>
-#include"struct.h"
-#include<ctype.h>
+#include "struct.h"
+#include <ctype.h>
 char current_Char;
 FilePlace Mot;
 char next_char()
 {
-    current_Char=getc(Fl);
-    if(current_Char=='\n')NUMLIGNE++;
+    current_Char = getc(Fl);
+    if (current_Char == '\n')
+        NUMLIGNE++;
     return current_Char;
 }
-void init_pos(){
-    ReturnToplace(Fl,Mot);
+void init_pos()
+{
+    ReturnToplace(Fl, Mot);
 }
 token etat_10(token t)
 {
@@ -84,14 +86,14 @@ token etat_3()
 }
 token etat_2()
 {
-    char c=next_char();  
+    char c = next_char();
     switch (c)
     {
     case 'n':
         return etat_3();
         break;
-    default: 
-        ungetc(c,Fl);
+    default:
+        ungetc(c, Fl);
         return si;
     }
 }
@@ -126,37 +128,37 @@ token etat_14()
 }
 token etat_13()
 {
-    char c=next_char();
+    char c = next_char();
     switch (c)
     {
     case '=':
-        return etat_14(); 
+        return etat_14();
         break;
     default:
-        ungetc(c,Fl);
+        ungetc(c, Fl);
         return oprel;
     }
 }
 token etat_12()
 {
-    char c=next_char();
-   
+    char c = next_char();
+
     switch (c)
     {
     case '>':
-        return etat_14(); 
+        return etat_14();
         break;
     case '=':
         return etat_14();
         break;
-    default: 
-        ungetc(c,Fl);
+    default:
+        ungetc(c, Fl);
         return oprel;
     }
 }
 token etat_11()
 {
-    char c=next_char();
+    char c = next_char();
     switch (c)
     {
     case '<':
@@ -174,58 +176,69 @@ token etat_11()
 }
 token etat_16()
 {
-    char c=next_char();
-    if(isletter(c))return etat_16();
-    if(ischiffre(c))return etat_16();
-    ungetc(c,Fl);
+    char c = next_char();
+    if (isletter(c))
+        return etat_16();
+    if (ischiffre(c))
+        return etat_16();
+    ungetc(c, Fl);
     return id;
 }
 token etat_15()
 {
-    char c=next_char();
-    if(isletter(c))return etat_16();
+    char c = next_char();
+    if (isletter(c))
+        return etat_16();
     return err;
 }
 token etat_23()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_23();
-    ungetc(c,Fl);
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_23();
+    ungetc(c, Fl);
     return nb;
     return err;
 }
 token etat_22()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_23();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_23();
     return err;
 }
 token etat_21()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_23();
-    if(c=='+' || c=='-') return etat_22();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_23();
+    if (c == '+' || c == '-')
+        return etat_22();
     return err;
 }
 token etat_20()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_20();
-    if(c=='E')return etat_21();
-    ungetc(c,Fl);
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_20();
+    if (c == 'E')
+        return etat_21();
+    ungetc(c, Fl);
     return nb;
     return err;
 }
 token etat_19()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_20();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_20();
     return err;
 }
 token etat_18()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_18();///////////////we know//////////////////
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_18(); ///////////////changement//////////////////
     switch (c)
     {
     case '.':
@@ -235,56 +248,64 @@ token etat_18()
         return etat_21();
         break;
     default:
-        ungetc(c,Fl);
+        ungetc(c, Fl);
         return nb;
     }
 }
 token etat_17()
 {
-    char c=next_char();
-    if(ischiffre(c))return etat_18();
+    char c = next_char();
+    if (ischiffre(c))
+        return etat_18();
     return err;
 }
 token fail()
 {
-    char c,temp;
-    token R=etat_0();
-    if(R!=err)return R;
+    char c, temp;
+    token R = etat_0();
+    if (R != err)
+        return R;
     init_pos();
-    R=etat_11();
-    if(R!=err)return R;
+    R = etat_11();
+    if (R != err)
+        return R;
     init_pos();
-    R=etat_15();
-    if(R!=err)return R;
+    R = etat_15();
+    if (R != err)
+        return R;
     init_pos();
-    R=etat_17();
-    if(R!=err)return R;
-    temp=current_Char;
-    if((c=next_char())==EOF)return scanof;
-    ungetc(c,Fl);
-    current_Char=temp;
-    error(Fl,current_Char);
+    R = etat_17();
+    if (R != err)
+        return R;
+    temp = current_Char;
+    AxeNUMLIGNE = NUMLIGNE;
+    if ((c = next_char()) == EOF)
+        return scanof;
+    ungetc(c, Fl);
+    NUMLIGNE = AxeNUMLIGNE;
+    current_Char = temp;
+    error(Fl, current_Char);
     return err;
 }
-void putInFile(char*car,FILE*file)
+void putInFile(char *car, FILE *file)
 {
-    fprintf(file,"[%s]",car);
+    fprintf(file, "[%s]", car);
 }
-char* scanner(char*chemin)
+char *scanner(char *chemin)
 {
-    NUMLIGNE=1;
-    Fl=fopen(chemin,"r");
-    char*Lexia="Lexical_file.txt";
-    FILE*LEX=fopen(Lexia,"w");
+    NUMLIGNE = 1;
+    Fl = fopen(chemin, "r");
+    char *Lexia = "Lexical_file.txt";
+    FILE *LEX = fopen(Lexia, "w");
     token tok;
     char c;
-    Mot=RememberPlace(Fl);
-    while((tok=fail())!=scanof)
+    Mot = RememberPlace(Fl);
+    while ((tok = fail()) != scanof)
     {
-        putInFile(TableTokens[tok],LEX);
-        while(isspace(c=getc(Fl)));
-        ungetc(c,Fl);
-        Mot=RememberPlace(Fl);
+        putInFile(TableTokens[tok], LEX);
+        while (isspace(c = getc(Fl)));
+        ungetc(c, Fl);
+        Mot = RememberPlace(Fl);
     }
     fclose(Fl);
     fclose(LEX);
